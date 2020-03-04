@@ -1,15 +1,33 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {API_KEY, API_URL} from '../api/api';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
-import React from 'react';
+import GoogleMap from '../components/GoogleMap';
 
 const Home = ({navigation}) => {
+  const [pharmacyInfos, setPharmacyInfos] = useState(null);
+
+  const getPharmacyInfos = async () => {
+    const res = await fetch(`${API_URL}?ServiceKey=${API_KEY}&_type=json`);
+    const {
+      response: {body: items},
+    } = await res.json();
+    setPharmacyInfos(items.items.item);
+  };
+
+  useEffect(() => {
+    getPharmacyInfos();
+    return () => {
+      //
+    };
+  }, []);
+
+  console.log('pharmacyInfos', pharmacyInfos);
+
   return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>hi</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Sub')}>
-        <Text>go to sub</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <GoogleMap pharmacyInfos={pharmacyInfos} />
+    </>
   );
 };
 
